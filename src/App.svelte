@@ -46,8 +46,9 @@
 
 	:global(body) {
 		height: 100%;
-		overflow-y: auto;
-		overflow-x: auto;
+		overflow-y: hidden;
+		overflow-x: hidden;
+		background-color: black !important;
 	}
 
 	:global(a) {
