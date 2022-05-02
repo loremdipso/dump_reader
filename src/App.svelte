@@ -5,7 +5,35 @@
 		document.body.scrollTop = 0;
 	});
 
-	import GithubCorner from "./common/GithubCorner.svelte";
+	import Button from "smelte/src/components/Button/Button.svelte";
+
+	/* import GithubCorner from "./common/GithubCorner.svelte"; */
+
+	import Reader from "./components/Reader.svelte";
+
+	let fileVar: any;
+	$: {
+		let file = fileVar && fileVar[0];
+		if (file) {
+			fileVar = null;
+			const reader = new FileReader();
+			reader.onload = (e) => {
+				/* let result = parseFile(e.target.result as string); */
+				console.log({result: e.target.result});
+				/* if (result.hasValue) { */
+				/* 	players = result.value; */
+				/* } else if (result.hasValue === false) { */
+				/* 	toaster.alert(result.error); */
+				/* } */
+			};
+			reader.readAsText(file);
+		}
+	}
+
+	let fileInput: HTMLElement;
+	function doImport() {
+		fileInput.click();
+	}
 </script>
 
 <svelte:head>
@@ -27,19 +55,32 @@
 </svelte:head>
 
 <main class="pb-32 fade-in">
-	<header
-		class="relative slide-in-from-top bg-primary-300 dark:bg-black flex flex-wrap h-16 items-center justify-center left-0 p-0 shadow top-0 w-full z-20"
-	>
+	<header class="relative slide-in-from-top bg-primary-300 dark:bg-black flex flex-wrap h-16 items-center justify-center left-0 p-0 shadow top-0 w-full z-20">
 		<h6 class="select-none pl-3 tracking-widest text-lg">
 			<a href="." class="text-white">Hello world!</a>
 		</h6>
 
+		<!--
 		<GithubCorner
-			href="https://github.com/loremdipso/TODO"
+			href="https://github.com/loremdipso/dump_reader"
 			position="topRight"
 			small
 		/>
+		-->
+
+
+<input
+		bind:this={fileInput}
+		class="hidden"
+		type="file"
+		bind:files={fileVar}
+		accept=".adump"
+		/>
+
+		<Button on:click={doImport}>Open</Button>
 	</header>
+
+	<Reader />
 </main>
 
 <style lang="scss">
@@ -50,7 +91,7 @@
 
 	:global(body) {
 		height: 100%;
-		overflow-y: scroll;
+		overflow-y: auto;
 		overflow-x: auto;
 	}
 
