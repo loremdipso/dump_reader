@@ -33,14 +33,6 @@ a {
     opacity: 1;
   }
 }
-.reverse.svelte-ysz42y {
-  transform: rotate(180deg);
-}
-
-.tip.svelte-ysz42y {
-  transform: rotate(90deg);
-}
-
 img.svelte-1n7cv3s {
   width: 100%;
 }
@@ -49,4 +41,12 @@ img.svelte-1n7cv3s {
   display: flex;
   justify-content: space-between;
   width: 100%;
+}
+
+.reverse.svelte-1vfhdta {
+  transform: rotate(180deg);
+}
+
+.tip.svelte-1vfhdta {
+  transform: rotate(90deg);
 }
