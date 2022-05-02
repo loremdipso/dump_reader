@@ -12,21 +12,17 @@
 	import Reader from "./components/Reader.svelte";
 
 	let fileVar: any;
+	let view: Uint8Array|null = null;
 	$: {
 		let file = fileVar && fileVar[0];
 		if (file) {
 			fileVar = null;
 			const reader = new FileReader();
 			reader.onload = (e) => {
-				/* let result = parseFile(e.target.result as string); */
-				console.log({result: e.target.result});
-				/* if (result.hasValue) { */
-				/* 	players = result.value; */
-				/* } else if (result.hasValue === false) { */
-				/* 	toaster.alert(result.error); */
-				/* } */
+				let buffer = e.target.result as ArrayBuffer;
+				view = new Uint8Array(buffer);
 			};
-			reader.readAsText(file);
+			reader.readAsArrayBuffer(file);
 		}
 	}
 
@@ -80,7 +76,7 @@
 		<Button on:click={doImport}>Open</Button>
 	</header>
 
-	<Reader />
+	<Reader {view} />
 </main>
 
 <style lang="scss">

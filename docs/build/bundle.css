@@ -37,65 +37,6 @@ a {
     opacity: 1;
   }
 }
-.github-corner.svelte-1rr76ng:hover .octo-arm.svelte-1rr76ng {
-  animation: svelte-1rr76ng-octocat-wave 560ms ease-in-out;
-}
-
-@keyframes svelte-1rr76ng-octocat-wave {
-  0%, 100% {
-    transform: rotate(0);
-  }
-  20%, 60% {
-    transform: rotate(-25deg);
-  }
-  40%, 80% {
-    transform: rotate(10deg);
-  }
-}
-@media (max-width: 500px) {
-  .github-corner.svelte-1rr76ng:hover .octo-arm.svelte-1rr76ng {
-    animation: none;
-  }
-
-  .github-corner.svelte-1rr76ng .octo-arm.svelte-1rr76ng {
-    animation: svelte-1rr76ng-octocat-wave 560ms ease-in-out;
-  }
-}
-svg.svelte-1rr76ng.svelte-1rr76ng {
-  z-index: 1000;
-  color: #fff;
-  position: absolute;
-  border: 0;
-}
-
-.topRight.svelte-1rr76ng.svelte-1rr76ng {
-  top: 0;
-  right: 0;
-}
-
-.topLeft.svelte-1rr76ng.svelte-1rr76ng {
-  top: 0;
-  left: 0;
-  transform: rotate(270deg);
-}
-
-.bottomRight.svelte-1rr76ng.svelte-1rr76ng {
-  bottom: 0;
-  right: 0;
-  transform: rotate(90deg);
-}
-
-.bottomLeft.svelte-1rr76ng.svelte-1rr76ng {
-  bottom: 0;
-  left: 0;
-  transform: rotate(180deg);
-}
-
-.small.svelte-1rr76ng.svelte-1rr76ng {
-  width: 64px;
-  height: 64px;
-}
-
 .reverse.svelte-ysz42y {
   transform: rotate(180deg);
 }
