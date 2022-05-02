@@ -10,7 +10,10 @@
 			"@components/*": [
 				"components/*"
 			],
-		},
+			"@utils/*": [
+				"utils/*"
+			]
+		}
 	},
 	"exclude": [
 		"node_modules/*",

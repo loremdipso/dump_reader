@@ -16,6 +16,8 @@
 		"@rollup/plugin-replace": "^3.0.1",
 		"@rollup/plugin-typescript": "^8.0.0",
 		"@tsconfig/svelte": "^2.0.0",
+		"@types/crypto-js": "^4.1.1",
+		"crypto-js": "^4.1.1",
 		"node-sass": "^7.0.1",
 		"rollup": "^2.3.4",
 		"rollup-plugin-livereload": "^2.0.0",
