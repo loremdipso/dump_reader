@@ -115,7 +115,7 @@
 	/>
 
 	<div class="button-container">
-		<TextField label="secrets" class="" bind:value={password} />
+		<TextField label="secrets" type="password" class="" bind:value={password} />
 		<Button class="big-button" on:click={doImport}>Open</Button>
 	</div>
 {/if}

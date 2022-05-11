@@ -62,10 +62,6 @@ img.svelte-1g462ed {
   flex-grow: 1;
 }
 
-.line.svelte-z73i1c {
-  height: 1px;
-}
-
 .label-top.svelte-1cjwqag {
   line-height: 0.05;
 }
@@ -76,6 +72,10 @@ img.svelte-1g462ed {
 
 label.text-xs {
   font-size: 0.7rem;
+}
+
+.line.svelte-z73i1c {
+  height: 1px;
 }
 
 .reverse.svelte-1vfhdta {
