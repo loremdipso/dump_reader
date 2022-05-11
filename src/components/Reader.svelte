@@ -1,40 +1,29 @@
 <script lang="ts">
+	import {Archive} from 'libarchive.js/main.js';
 	import Button from "smelte/src/components/Button/Button.svelte";
+	import TextField from "smelte/src/components/TextField/TextField.svelte";
 
-	import { decodeMulti } from "@msgpack/msgpack";
-
-	import { decrypt } from "utils/crypt";
-
-	interface IPrelude {
-		encrypted: boolean;
-		header_start: number;
-		header_size: number;
-	}
-
-	interface IArtifact {
-		path: string;
-		size: 20;
-		start: 0;
-	}
+	Archive.init({
+		workerUrl: 'libarchive.js/dist/worker-bundle.js'
+	});
 
 	let imgsrc = "";
-	let preamble: IPrelude | null = null;
-	let header: IArtifact[] = [];
 	let currentIndex = 0;
 
+	interface FileEntry {
+		name: string;
+		file: File;
+	};
+
+	let files: FileEntry[];
+
+	let password: string = "";
+
 	let fileVar: any;
-	let view: Uint8Array | null = null;
 	$: {
 		let file = fileVar && fileVar[0];
 		if (file) {
-			fileVar = null;
-			const reader = new FileReader();
-			reader.onload = (e) => {
-				let buffer = e.target.result as ArrayBuffer;
-				view = new Uint8Array(buffer);
-				decodeView(view);
-			};
-			reader.readAsArrayBuffer(file);
+			openArchiveFile(file);
 		}
 	}
 
@@ -43,54 +32,42 @@
 		fileInput.click();
 	}
 
-	function decodeView() {
-		const MAX_PREAMBLE_LENGTH = 100;
-		let preamble_bytes = Array.from(
-			view.slice(view.length - MAX_PREAMBLE_LENGTH)
-		).reverse();
+	async function openArchiveFile(file: File) {
+		const archive = await Archive.open(file);
+		await archive.usePassword(password);
+		let obj = await archive.extractFiles();
+		console.log({obj});
 
-		// Get the preamble
-		// We use decodeMulti since we're not actually sure how big the header is going to be
-		preamble = decodeMulti(Uint8Array.from(preamble_bytes)).next()
-			.value as IPrelude;
-
-		// Get the header
-		let header_bytes = view.slice(
-			preamble.header_start,
-			preamble.header_start + preamble.header_size
-		);
-		if (preamble.encrypted) {
-			decrypt(header_bytes);
-		}
-		header = decodeMulti(Uint8Array.from(header_bytes)).next()
-			.value as IArtifact[];
-
+		files = parseObj(obj);
+		files.sort((a, b) => a.name > b.name ? 1 : -1);
+		console.log(files);
 		showFirst();
 	}
 
-	function showCurrent() {
-		if (!preamble) {
-			console.log("no preamble");
-			return;
+	function parseObj(obj: any): FileEntry[] {
+		let files: FileEntry[] = [];
+
+		for (const key in obj) {
+			const value = obj[key];
+			if (value instanceof File) {
+				files.push({name: key, file: value});
+			} else {
+				files = files.concat(parseObj(value));
+			}
 		}
 
-		// Decode single file
-		let file = header[currentIndex];
-		let file_bytes = view.slice(file.start, file.start + file.size);
-		if (preamble.encrypted) {
-			decrypt(file_bytes);
-		}
+		return files;
+	}
 
-		// Convert to a string
-		let base64Url = window.btoa(
-			file_bytes.reduce(
-				(acc, current) => acc + String.fromCharCode(current),
-				""
-			)
-		);
+	async function showCurrent() {
+		console.log(`showing ${currentIndex}`);
 
-		// encode to base64
-		imgsrc = `data:image/png;base64,${base64Url}`;
+		let file = files[currentIndex];
+		const reader = new FileReader();
+		reader.readAsDataURL(file.file);
+		reader.onload = () => {
+			imgsrc = reader.result as string;
+		};
 	}
 
 	function showFirst() {
@@ -99,6 +76,7 @@
 	}
 
 	function showPrevious() {
+		console.log("showing previous");
 		if (currentIndex > 0) {
 			currentIndex -= 1;
 			showCurrent();
@@ -106,7 +84,8 @@
 	}
 
 	function showNext() {
-		if (currentIndex < header.length - 1) {
+		console.log("showing next");
+		if (currentIndex < files.length - 1) {
 			currentIndex += 1;
 			showCurrent();
 		}
@@ -122,24 +101,23 @@
 	}
 </script>
 
-{#if !view}
+{#if files}
+	<div class="overlay" on:click={(e) => handleImageClick(e)} />
+
+	<img src={imgsrc} alt="idk" />
+{:else}
 	<input
 		bind:this={fileInput}
 		class="hidden"
 		type="file"
 		bind:files={fileVar}
-		accept=".adump"
+		accept=".zip"
 	/>
 
 	<div class="button-container">
-		<!-- <Button on:click={showPrevious}>Previous</Button> -->
+		<TextField label="secrets" class="" bind:value={password} />
 		<Button class="big-button" on:click={doImport}>Open</Button>
-		<!-- <Button on:click={showNext}>Next</Button> -->
 	</div>
-{:else}
-	<div class="overlay" on:click={(e) => handleImageClick(e)} />
-
-	<img src={imgsrc} />
 {/if}
 
 <style lang="scss">
@@ -160,12 +138,13 @@
 
 	.button-container {
 		display: flex;
+		flex-direction: column;
 		justify-content: space-between;
 		width: 100vw;
 		height: 100vh;
 	}
 
-	:global(.button-container > *) {
+	:global(.button-container > :last-child) {
 		flex-grow: 1;
 	}
 </style>
